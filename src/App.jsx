@@ -13,12 +13,12 @@ function ProductDetail({ product, onBack, onAdd }) {
   return (
     <div className="container mt-8 animate-fade-up" style={{paddingBottom: '6rem'}}>
       <button onClick={onBack} className="btn btn-outline" style={{marginBottom: '2rem', padding: '0.5rem 1rem', fontSize: '0.9rem'}}>← Back</button>
-      <div className="grid grid-cols-2" style={{alignItems: 'flex-start', gap: '4rem'}}>
+      <div className="grid product-detail-grid" style={{alignItems: 'flex-start', gap: '4rem'}}>
         <div>
-          <div style={{borderRadius: 'var(--radius-sm)', overflow: 'hidden', height: '550px', backgroundColor: 'var(--bg-surface)'}}>
+          <div style={{borderRadius: 'var(--radius-sm)', overflow: 'hidden', height: '400px', backgroundColor: 'var(--bg-surface)'}}>
             <img src={mainImg} alt={product.name} style={{width: '100%', height: '100%', objectFit: 'cover', filter: product.filter || 'none'}} />
           </div>
-          <div style={{display: 'flex', gap: '1rem', marginTop: '1rem'}}>
+          <div style={{display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap'}}>
             {product.images.map((img, i) => (
               <div 
                 key={i} 
@@ -85,6 +85,11 @@ function App(){
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [trendingIndex, setTrendingIndex] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [view]);
 
   useEffect(() => {
     if (view === 'home' && products.length > 0) {
@@ -189,7 +194,7 @@ function App(){
     <div className="app-container">
       {/* E-commerce Top Utility Bar */}
       <div className="top-bar">
-        FREE Nationwide Shipping on Orders over ₹50,000 | Contact Us: +91 98765 43210
+        FREE Nationwide Shipping on Orders over ₹50,000
       </div>
 
       {/* Modern Navbar */}
@@ -199,14 +204,27 @@ function App(){
             <span style={{fontSize: '1.8rem'}}>SC</span> <span style={{fontWeight: 300}}>SteelCraft</span>
           </div>
           
-          <nav className="nav-links">
+          <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
+            <div className="mobile-search-wrap" style={{width: '100%', marginBottom: '2rem'}}>
+              <div style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+                <input 
+                  type="text" 
+                  placeholder="Search products..." 
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
+                  className="input"
+                  style={{width: '100%', padding: '0.75rem 2.5rem 0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)'}}
+                />
+                <span style={{position: 'absolute', right: '12px', color: 'var(--text-muted)'}}>🔍</span>
+              </div>
+            </div>
             <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => setView('home')}>Home</button>
             <button className={`nav-link ${view === 'shop' ? 'active' : ''}`} onClick={() => setView('shop')}>Shop</button>
             <button className={`nav-link ${view === 'contact' ? 'active' : ''}`} onClick={() => setView('contact')}>Contact</button>
           </nav>
 
           <div className="nav-icons">
-            <div style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+            <div className="search-container" style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
               <input 
                 type="text" 
                 placeholder="Search products..." 
@@ -214,7 +232,8 @@ function App(){
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                style={{padding: '0.5rem 2.5rem 0.5rem 1rem', borderRadius: '20px', border: '1px solid var(--border)', outline: 'none', width: '220px', fontSize: '0.9rem'}}
+                style={{padding: '0.5rem 2.5rem 0.5rem 1rem', borderRadius: '20px', border: '1px solid var(--border)', outline: 'none', fontSize: '0.9rem'}}
+                className="nav-search-input"
               />
               <span style={{position: 'absolute', right: '12px', color: 'var(--text-muted)'}}>🔍</span>
               {showSuggestions && searchQuery && (
@@ -239,6 +258,9 @@ function App(){
               🛒 
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </button>
+            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
           </div>
         </div>
       </header>
@@ -248,20 +270,20 @@ function App(){
           <div className={animate ? "animate-fade-up" : ""} style={{opacity: animate ? 1 : 0}}>
             
             {/* Hero Section with Video */}
-            <section style={{position: 'relative', height: '75vh', minHeight: '600px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <section className="hero-section" style={{position: 'relative', height: '75vh', minHeight: '500px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <video autoPlay loop muted playsInline style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -2}}>
                 <source src="/images/bg_video.mp4" type="video/mp4" />
               </video>
               <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: -1}}></div>
               
               <div className="container text-center" style={{color: 'white', zIndex: 1}}>
-                <h1 key={heroTextIdx} className="cinematic-text" style={{fontSize: '5rem', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)', color: 'white', lineHeight: 1.1, whiteSpace: 'pre-line'}}>
+                <h1 key={heroTextIdx} className="cinematic-text" style={{fontSize: 'min(5rem, 12vw)', fontWeight: 800, marginBottom: '1rem', textShadow: '0 4px 12px rgba(0,0,0,0.5)', color: 'white', lineHeight: 1.1, whiteSpace: 'pre-line'}}>
                   {heroTexts[heroTextIdx]}
                 </h1>
-                <p className="animate-fade-up delay-200" style={{fontSize: '1.25rem', maxWidth: '700px', margin: '0 auto 3rem', color: '#f1f5f9'}}>
+                <p className="animate-fade-up delay-200" style={{fontSize: 'min(1.25rem, 4vw)', maxWidth: '700px', margin: '0 auto 3rem', color: '#f1f5f9'}}>
                   Explore the finest collection of luxury stainless steel furniture and architectural elements. Unmatched durability meets modern design.
                 </p>
-                <button className="btn btn-primary animate-scale delay-300" onClick={() => setView('shop')} style={{padding: '1rem 3rem', fontSize: '1.1rem'}}>Shop Collection</button>
+                <button className="btn btn-primary animate-scale delay-300" onClick={() => setView('shop')} style={{padding: '1rem 3rem', fontSize: '1rem'}}>Shop Collection</button>
               </div>
             </section>
 
@@ -290,10 +312,10 @@ function App(){
             </div>
 
             {/* Featured Products Collection */}
-            <section className="container mt-8 animate-fade-up delay-500" style={{padding: '6rem 0'}}>
-              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem'}}>
+            <section className="container mt-8 animate-fade-up delay-500" style={{padding: '4rem 0'}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem'}}>
                 <div>
-                  <h2 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1 }}>Trending Now</h2>
+                  <h2 style={{ fontSize: 'min(2.5rem, 8vw)', fontWeight: 800, lineHeight: 1 }}>Trending Now</h2>
                   <p className="text-muted" style={{marginTop: '0.5rem'}}>Best sellers this month.</p>
                 </div>
                 <button className="btn btn-outline" onClick={() => setView('shop')}>View All →</button>
@@ -320,9 +342,9 @@ function App(){
             </section>
             
             {/* Features/Process Section */}
-            <section className="container mt-8 animate-fade-up delay-600" style={{padding: '4rem 2rem', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', marginBottom: '4rem'}}>
+            <section className="container mt-8 animate-fade-up delay-600" style={{padding: '4rem 1.5rem', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', marginBottom: '4rem'}}>
               <div style={{textAlign: 'center', marginBottom: '3rem'}}>
-                <h2 style={{fontSize: '2.5rem', fontWeight: 800}}>The SteelCraft Advantage</h2>
+                <h2 style={{fontSize: 'min(2.5rem, 8vw)', fontWeight: 800}}>The SteelCraft Advantage</h2>
                 <p className="text-muted" style={{marginTop: '0.5rem'}}>Why we are the leading choice for premium steel furniture</p>
               </div>
               <div className="grid grid-cols-3 text-center" style={{gap: '2rem'}}>
@@ -408,7 +430,7 @@ function App(){
 
         {view === 'cart' && (
           <div className={`container mt-8 ${animate ? 'animate-scale' : ''}`} style={{ maxWidth: '1000px', margin: '2rem auto', opacity: animate ? 1 : 0, paddingBottom: '6rem' }}>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '3rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>Shopping Bag ({cartCount})</h1>
+            <h1 style={{ fontSize: 'min(2.5rem, 9vw)', fontWeight: 800, marginBottom: '3rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>Shopping Bag ({cartCount})</h1>
             
             {cart.length === 0 ? (
               <div className="text-center animate-fade-up delay-100" style={{padding: '4rem 0'}}>
@@ -418,7 +440,7 @@ function App(){
                 <button className="btn btn-primary" onClick={() => setView('shop')} style={{padding: '1rem 3rem'}}>Start Shopping</button>
               </div>
             ) : (
-              <div className="grid grid-cols-2" style={{ alignItems: 'flex-start', gridTemplateColumns: '1.3fr 0.7fr', gap: '3rem' }}>
+              <div className="grid cart-grid" style={{ alignItems: 'flex-start', gap: '3rem' }}>
                 <div className="animate-fade-left delay-100">
                   <div style={{ marginBottom: '2rem' }}>
                     {cart.map(c => (
@@ -443,7 +465,7 @@ function App(){
                   </div>
                 </div>
 
-                <div className="animate-fade-right delay-200" style={{position: 'sticky', top: '100px', background: 'var(--bg-surface)', padding: '2rem', borderRadius: 'var(--radius-md)'}}>
+                <div className="animate-fade-right delay-200" style={{position: 'relative', top: '0', background: 'var(--bg-surface)', padding: '2rem', borderRadius: 'var(--radius-md)'}}>
                   <h3 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 700 }}>Order Summary</h3>
                   <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--text-muted)'}}>
                      <span>Subtotal</span>
@@ -474,7 +496,7 @@ function App(){
 
         {view === 'contact' && (
           <div className={`container mt-8 ${animate ? 'animate-fade-up' : ''}`} style={{ maxWidth: '900px', margin: '2rem auto', opacity: animate ? 1 : 0, paddingBottom: '6rem' }}>
-            <div className="grid grid-cols-2" style={{border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'white', boxShadow: 'var(--shadow-lg)', overflow: 'hidden'}}>
+            <div className="grid contact-grid" style={{border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'white', boxShadow: 'var(--shadow-lg)', overflow: 'hidden', gap: 0}}>
               <div style={{background: '#0f172a', color: 'white', padding: '3rem'}}>
                 <h2 style={{fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem'}}>Get in Touch</h2>
                 <p style={{color: '#94a3b8', marginBottom: '3rem', fontSize: '1.1rem'}}>Have a question about our products or want a custom design? We'd love to hear from you.</p>
@@ -573,7 +595,7 @@ function App(){
 
       {/* Footer */}
       <footer style={{backgroundColor: '#0f172a', color: '#94a3b8', padding: '5rem 0 2rem', marginTop: 'auto'}}>
-        <div className="container grid grid-cols-4" style={{marginBottom: '4rem'}}>
+        <div className="container grid grid-cols-4 footer-grid" style={{marginBottom: '4rem'}}>
           <div style={{gridColumn: 'span 2'}}>
             <h3 style={{color: 'white', fontSize: '1.5rem', marginBottom: '1rem', fontWeight: 800}}>SteelCraft.</h3>
             <p style={{maxWidth: '350px', marginBottom: '2rem'}}>The ultimate destination for premium stainless steel furniture. Experience flawless craftsmanship and timeless design.</p>
@@ -602,7 +624,7 @@ function App(){
             </ul>
           </div>
         </div>
-        <div className="container" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1e293b', paddingTop: '2rem', fontSize: '0.9rem'}}>
+        <div className="container" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #1e293b', paddingTop: '2rem', fontSize: '0.9rem', flexWrap: 'wrap', gap: '1rem'}}>
           <div>&copy; {new Date().getFullYear()} SteelCraft. All rights reserved.</div>
           <div style={{display: 'flex', gap: '0.75rem', fontSize: '1.5rem', opacity: 0.8}}>
             <span>💳</span>
