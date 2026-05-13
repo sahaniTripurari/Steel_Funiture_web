@@ -19,9 +19,12 @@ app.use('/api/messages', messagesRouter);
 // Serve Static Files for Production
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get('/*', (req, res) => {
+// Catch-all route to serve the frontend
+app.use((req, res) => {
   if (!req.path.startsWith('/api/')) {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  } else {
+    res.status(404).json({ error: 'API route not found' });
   }
 });
 
