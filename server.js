@@ -19,7 +19,7 @@ app.use('/api/messages', messagesRouter);
 // Serve Static Files for Production
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
   if (!req.path.startsWith('/api/')) {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
   }
